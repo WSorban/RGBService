@@ -1,0 +1,4 @@
+﻿  ChromaSDKImpl.cpp
+C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\atlmfc\include\afx.h(24): fatal error C1189: #error:  Building MFC application with /MD[d] (CRT dll version) requires MFC shared dll version. Please #define _AFXDLL or do not use /MD[d]
+  SampleServiceMain.cpp
+d:\dropbox\pcdesktop\sampleservice\ChromaSDKImpl.h(7): fatal error C1083: Cannot open include file: 'RzChromaSDKDefines.h': No such file or directory
