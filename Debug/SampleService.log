@@ -1,1 +1,3 @@
-﻿  SampleService.vcxproj -> D:\VisualStudio\RGBService\Debug\SampleService.exe
+﻿  SampleServiceMain.cpp
+SampleServiceMain.cpp(268): warning C4101: 'e': unreferenced local variable
+  SampleService.vcxproj -> D:\VisualStudio\RGBService\Debug\SampleService.exe

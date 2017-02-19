@@ -232,10 +232,12 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 {
 	Socket^ socket = gcnew Socket(AddressFamily::InterNetwork, SocketType::Dgram, ProtocolType::Udp);
 	IPEndPoint^ ipep = gcnew IPEndPoint(IPAddress::Any, 30303);
+	bool asusInitialized;
 
 	CChromaSDKImpl m_ChromaSDKImpl = *((CChromaSDKImpl*)vpParam);
 
 	m_ChromaSDKImpl.Initialize();
+	asusInitialized = m_ChromaSDKImpl.initASUS();
 
 	//Add initialization with a welcome!!!
 	String^ message = "welcome";
@@ -280,7 +282,8 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 			m_ChromaSDKImpl.ShowColor(MOUSE_DEVICES, RGB(R, G, B));
 			m_ChromaSDKImpl.ShowColor(KEYBOARD_DEVICES, RGB(R, G, B));
 			m_ChromaSDKImpl.ShowColor(MOUSEMAT_DEVICES, RGB(R, G, B));
-			m_ChromaSDKImpl.SetGPULights(R, G, B);
+			if(asusInitialized)
+				m_ChromaSDKImpl.SetGPULights(R, G, B);
 		}
 	}
 	socket->Close();
