@@ -18,4 +18,8 @@ The Android application was not written by me, and can be found here:
 
 https://play.google.com/store/apps/details?id=com.howesthatapp.mike.razerconfigurator
 
+Also big shout out for iMoD1998, for decoding the ASUS ROG GPU led code.
+More info here:
+https://www.youtube.com/watch?v=37iOmKfJJPs
+
 Enjoy!
