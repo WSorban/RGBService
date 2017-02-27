@@ -10,7 +10,7 @@ R 0-255 G 0-255 B 0-255
 
 The service binary can be downloaded from the Debug folder: SampleService.exe
 
-You may also want the install.bat file located in the same folder, which will open the UDP port 30303, and add the binary to the services, for you.
+You may also want the install.bat file located in the same folder, which will open the UDP port 30303, and add the binary to the services, for you. (you must run it as administrator)
 
 The Android application was not written by me, and can be found here:
 
