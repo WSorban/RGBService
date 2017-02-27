@@ -1,3 +1,8 @@
-﻿  SampleServiceMain.cpp
+﻿  stdafx.cpp
+d:\visualstudio\rgbservice\stdafx.h(8): warning C4005: '_AFXDLL': macro redefinition
+  d:\visualstudio\rgbservice\stdafx.h(8): note: command-line arguments:  see previous definition of '_AFXDLL'
+  ChromaSDKImpl.cpp
+ChromaSDKImpl.cpp(515): warning C4244: 'argument': conversion from 'wchar_t' to 'char', possible loss of data
+  SampleServiceMain.cpp
 SampleServiceMain.cpp(268): warning C4101: 'e': unreferenced local variable
   SampleService.vcxproj -> D:\VisualStudio\RGBService\Debug\SampleService.exe

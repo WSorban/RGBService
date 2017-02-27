@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SampleServiceMain.cpp">
+    <ClCompile Include="ChromaSDKImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ChromaSDKImpl.cpp">
+    <ClCompile Include="SampleServiceMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
@@ -29,19 +29,19 @@
     <ClInclude Include="ChromaSDKImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="ChromaSDK\inc\RzChromaSDKTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ChromaSDK\inc\RzChromaSDKDefines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ChromaSDK\inc\RzChromaSDKTypes.h">
+    <ClInclude Include="ChromaSDK\inc\RzErrors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ChromaSDK\inc\RzErrors.h">
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ASUS GPU.h">
