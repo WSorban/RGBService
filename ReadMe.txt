@@ -22,4 +22,7 @@ Also big shout out for iMoD1998, for decoding the ASUS ROG GPU led code.
 More info here:
 https://www.youtube.com/watch?v=37iOmKfJJPs
 
+This project is using the C++ Razer Chroma SDK, found here:
+https://github.com/ChromaSDK/OfficialSample
+
 Enjoy!
