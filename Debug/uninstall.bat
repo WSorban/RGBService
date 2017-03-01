@@ -1,5 +1,4 @@
 @ECHO OFF
-set PORT=30303
 set RULE_NAME="RzrRGBService"
 
 goto check_Permissions
@@ -12,14 +11,15 @@ goto check_Permissions
         echo Success: Administrative permissions confirmed.
 		netsh advfirewall firewall show rule name=%RULE_NAME% >nul
 		if not ERRORLEVEL 1 (
-			echo Hey, you already got a out rule by that name, you cannot put another one in!
+			netsh advfirewall firewall delete rule name=%RULE_NAME%
+			echo Deleted the firewall rule
+			net stop %RULE_NAME%
+			sc delete %RULE_NAME%
 		) else (
-			echo Rule %RULE_NAME% does not exist. Creating...
-			netsh advfirewall firewall add rule name=%RULE_NAME% dir=in action=allow program="%~dp0SampleService.exe" protocol=UDP localport=30303
-			sc create %RULE_NAME% binpath=%~dp0SampleService.exe start=delayed-auto
-			sc start %RULE_NAME%
-			echo Success... Press any key to exit
+			echo Rule %RULE_NAME% does not exist...
 		)
+
+		echo Success... Press any key to exit
     ) else (
         echo Administrator permissions not granted. Please run this as administrator
     )

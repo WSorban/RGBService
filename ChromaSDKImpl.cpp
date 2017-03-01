@@ -128,100 +128,239 @@ BOOL CChromaSDKImpl::UnInitialize()
 	return FALSE;
 }
 
-void CChromaSDKImpl::ShowColor(UINT DeviceType, COLORREF Color)
+void SetRazerKeyboardColor(COLORREF Color)
+{
+	if (CreateKeyboardEffect)
+	{
+		//This effect will not do transition
+		ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE Effect = {};
+		for (UINT row = 0; row<ChromaSDK::Keyboard::MAX_ROW; row++)
+		{
+			for (UINT col = 0; col<ChromaSDK::Keyboard::MAX_COLUMN; col++)
+			{
+				Effect.Color[row][col] = Color;
+			}
+		}
+
+		RZRESULT Result = CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_CUSTOM, &Effect, NULL);
+
+		//This effect will do transition
+		/*ChromaSDK::Keyboard::STATIC_EFFECT_TYPE Effect = {};
+		Effect.Color = Color;
+
+		RZRESULT Result = CreateEffect(BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_STATIC, &Effect, NULL);
+		//RZRESULT Result = CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_STATIC, &Effect, NULL);
+		*/
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void SetRazerMousepadColor(COLORREF Color)
+{
+	if (CreateMousepadEffect)
+	{
+		//This effect will not transition
+		ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE Effect = {};
+		for (UINT led = 0; led<ChromaSDK::Mousepad::MAX_LEDS; led++)
+		{
+			Effect.Color[led] = Color;
+		}
+		RZRESULT Result = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_CUSTOM, &Effect, NULL);
+
+		//This effect will transition
+		/*ChromaSDK::Mousepad::STATIC_EFFECT_TYPE Effect = {};
+		Effect.Color = Color;
+
+		RZRESULT Result = CreateEffect(FIREFLY_CHROMA, ChromaSDK::CHROMA_STATIC, &Effect, NULL);
+		//RZRESULT Result = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_STATIC, &Effect, NULL);
+		*/
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void SetRazerMouseColor(COLORREF Color)
+{
+	if (CreateMouseEffect)
+	{
+		ChromaSDK::Mouse::STATIC_EFFECT_TYPE Effect = {};
+		Effect.Color = Color;
+		Effect.LEDId = RZLED_ALL;
+
+		RZRESULT Result = CreateMouseEffect(ChromaSDK::Mouse::CHROMA_STATIC, &Effect, NULL);
+		//RZRESULT Result = CreateEffect(NAGA_EPIC_CHROMA, ChromaSDK::CHROMA_STATIC, &Effect, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void SetRazerHeadsetColor(COLORREF Color)
+{
+	if (CreateHeadsetEffect)
+	{
+		ChromaSDK::Headset::STATIC_EFFECT_TYPE Effect = {};
+		Effect.Color = Color;
+
+		//RZRESULT Result = CreateMouseEffect(ChromaSDK::Mouse::CHROMA_STATIC, &Effect, NULL);
+		RZRESULT Result = CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &Effect, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void SetRazerKeypadColor(COLORREF Color)
+{
+	if (CreateKeypadEffect)
+	{
+		ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE Effect = {};
+
+		for (UINT i = 0; i < ChromaSDK::Keypad::MAX_ROW; i++)
+		{
+			for (UINT j = 0; j < ChromaSDK::Keypad::MAX_COLUMN; j++)
+			{
+				Effect.Color[i][j] = Color;
+			}
+		}
+
+		RZRESULT Result = CreateKeypadEffect(ChromaSDK::Keypad::CHROMA_CUSTOM, &Effect, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void CChromaSDKImpl::SetRazerDeviceColor(UINT DeviceType, COLORREF Color)
+{
+	switch (DeviceType)
+	{
+		case 1:
+			SetRazerKeyboardColor(Color);
+			break;
+		case 2:
+			SetRazerMousepadColor(Color);
+			break;
+		case 3:
+			SetRazerMouseColor(Color);
+			break;
+		case 4:
+			SetRazerHeadsetColor(Color);
+			break;
+		case 5:
+			SetRazerKeypadColor(Color);
+			break;
+		case 6:
+			SetRazerKeyboardColor(Color);
+			SetRazerMousepadColor(Color);
+			SetRazerMouseColor(Color);
+			SetRazerHeadsetColor(Color);
+			SetRazerKeypadColor(Color);
+			break;
+	}
+}
+
+void CChromaSDKImpl::SetRazerDeviceBreathingEffect(UINT DeviceType, COLORREF Color)
+{
+
+}
+
+void CChromaSDKImpl::SetRazerDeviceReactiveEffect(UINT DeviceType, COLORREF Color)
+{
+
+}
+
+void SetRazerKeyboardWaveEffect(UINT Direction)
+{
+	UINT dummy = 0;
+	if (CreateKeyboardEffect)
+	{
+		//This effect will not do transition
+		ChromaSDK::Keyboard::WAVE_EFFECT_TYPE Effect = {};
+		switch(Direction)
+		{
+		case 1:
+			Effect.DIRECTION_LEFT_TO_RIGHT;
+			dummy = 1;
+			break;
+		case 0:
+			Effect.DIRECTION_RIGHT_TO_LEFT;
+			dummy = 2;
+			break;
+		}
+		Effect.DIRECTION_RIGHT_TO_LEFT;
+
+		RZRESULT Result = CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_WAVE, &Effect, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void SetRazerMousepadWaveEffect(UINT Direction)
+{
+	UINT dummy = 0;
+	if (CreateKeyboardEffect)
+	{
+		//This effect will not do transition
+		ChromaSDK::Mousepad::WAVE_EFFECT_TYPE Effect = {};
+		switch (Direction)
+		{
+		case 1:
+			Effect.DIRECTION_LEFT_TO_RIGHT;
+			dummy = 1;
+			break;
+		case 0:
+			Effect.DIRECTION_RIGHT_TO_LEFT;
+			dummy = 2;
+			break;
+		}
+		Effect.DIRECTION_RIGHT_TO_LEFT;
+
+		RZRESULT Result = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_WAVE, &Effect, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+
+}
+
+void SetRazerMouseWaveEffect(UINT Direction)
+{
+
+}
+
+void SetRazerHeadsetWaveEffect(UINT Direction)
+{
+
+}
+
+void SetRazerKeypadWaveEffect(UINT Direction)
+{
+
+}
+
+void CChromaSDKImpl::SetRazerDeviceWaveEffect(UINT DeviceType, UINT Direction)
 {
 	switch (DeviceType)
 	{
 	case 1:
-		//if (true)
-		if (CreateKeyboardEffect)
-		{
-			//This effect will not do transition
-			ChromaSDK::Keyboard::CUSTOM_EFFECT_TYPE Effect = {};
-			for (UINT row = 0; row<ChromaSDK::Keyboard::MAX_ROW; row++)
-			{
-				for (UINT col = 0; col<ChromaSDK::Keyboard::MAX_COLUMN; col++)
-				{
-					Effect.Color[row][col] = Color;
-				}
-			}
-
-			RZRESULT Result = CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_CUSTOM, &Effect, NULL);
-
-			//This effect will do transition
-			/*ChromaSDK::Keyboard::STATIC_EFFECT_TYPE Effect = {};
-			Effect.Color = Color;
-
-			RZRESULT Result = CreateEffect(BLACKWIDOW_CHROMA, ChromaSDK::CHROMA_STATIC, &Effect, NULL);
-			//RZRESULT Result = CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_STATIC, &Effect, NULL);
-			*/
-			ASSERT(Result == RZRESULT_SUCCESS);
-		}
+		//ResetEffects(DeviceType);
+		SetRazerKeyboardWaveEffect(Direction);
 		break;
 	case 2:
-		//if (true)
-		if (CreateMousepadEffect)
-		{
-			//This effect will not transition
-			ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE Effect = {};
-			for (UINT led = 0; led<ChromaSDK::Mousepad::MAX_LEDS; led++)
-			{
-				Effect.Color[led] = Color;
-			}
-			RZRESULT Result = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_CUSTOM, &Effect, NULL);
-
-			//This effect will transition
-			/*ChromaSDK::Mousepad::STATIC_EFFECT_TYPE Effect = {};
-			Effect.Color = Color;
-
-			RZRESULT Result = CreateEffect(FIREFLY_CHROMA, ChromaSDK::CHROMA_STATIC, &Effect, NULL);
-			//RZRESULT Result = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_STATIC, &Effect, NULL);
-			*/
-			ASSERT(Result == RZRESULT_SUCCESS);
-		}
+		SetRazerMousepadWaveEffect(Direction);
 		break;
 	case 3:
-		if (CreateMouseEffect)
-		{
-			ChromaSDK::Mouse::STATIC_EFFECT_TYPE Effect = {};
-			Effect.Color = Color;
-			Effect.LEDId = RZLED_ALL;
-
-			RZRESULT Result = CreateMouseEffect(ChromaSDK::Mouse::CHROMA_STATIC, &Effect, NULL);
-			//RZRESULT Result = CreateEffect(NAGA_EPIC_CHROMA, ChromaSDK::CHROMA_STATIC, &Effect, NULL);
-
-			ASSERT(Result == RZRESULT_SUCCESS);
-		}
+		SetRazerMouseWaveEffect(Direction);
 		break;
 	case 4:
-		if (CreateHeadsetEffect)
-		{
-			ChromaSDK::Headset::STATIC_EFFECT_TYPE Effect = {};
-			Effect.Color = Color;
-
-			//RZRESULT Result = CreateMouseEffect(ChromaSDK::Mouse::CHROMA_STATIC, &Effect, NULL);
-			RZRESULT Result = CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_STATIC, &Effect, NULL);
-
-			ASSERT(Result == RZRESULT_SUCCESS);
-		}
+		SetRazerHeadsetWaveEffect(Direction);
 		break;
 	case 5:
-		if (CreateKeypadEffect)
-		{
-			ChromaSDK::Keypad::CUSTOM_EFFECT_TYPE Effect = {};
-
-			for (UINT i = 0; i < ChromaSDK::Keypad::MAX_ROW; i++)
-			{
-				for (UINT j = 0; j < ChromaSDK::Keypad::MAX_COLUMN; j++)
-				{
-					Effect.Color[i][j] = Color;
-				}
-			}
-
-			RZRESULT Result = CreateKeypadEffect(ChromaSDK::Keypad::CHROMA_CUSTOM, &Effect, NULL);
-
-			ASSERT(Result == RZRESULT_SUCCESS);
-		}
+		SetRazerKeypadWaveEffect(Direction);
+		break;
+	case 6:
+		//ResetEffects(DeviceType);
+		SetRazerKeyboardWaveEffect(Direction);
+		SetRazerMousepadWaveEffect(Direction);
+		SetRazerMouseWaveEffect(Direction);
+		SetRazerHeadsetWaveEffect(Direction);
+		SetRazerKeypadWaveEffect(Direction);
 		break;
 	}
 }
@@ -230,7 +369,7 @@ void CChromaSDKImpl::ResetEffects(UINT DeviceType)
 {
 	switch (DeviceType)
 	{
-	case 0:
+	case 6:
 		if (CreateKeyboardEffect)
 		{
 			CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_NONE, NULL, NULL);
@@ -320,7 +459,7 @@ void CChromaSDKImpl::DebugUsingMousePad(int Result)
 		f.Color = RED;
 		Result = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_STATIC, &f, NULL);
 		break;
-	case RZRESULT_INVALID_PARAMETER: //this is what happens, need to find out why
+	case RZRESULT_INVALID_PARAMETER:
 		f.Color = GREEN;
 		Result = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_STATIC, &f, NULL);
 		break;

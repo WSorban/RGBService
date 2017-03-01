@@ -39,7 +39,10 @@ public:
 	BOOL Initialize();
 	BOOL UnInitialize();
 
-	void ShowColor(UINT DeviceType, COLORREF Color);
+	void SetRazerDeviceColor(UINT DeviceType, COLORREF Color);
+	void SetRazerDeviceBreathingEffect(UINT DeviceType, COLORREF Color);
+	void SetRazerDeviceReactiveEffect(UINT DeviceType, COLORREF Color);
+	void SetRazerDeviceWaveEffect(UINT DeviceType, UINT Direction);
 	void ResetEffects(UINT DeviceType);
 	BOOL IsDeviceConnected(RZDEVICEID DeviceId);
 	void DebugUsingMousePad(int Result);

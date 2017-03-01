@@ -236,6 +236,14 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 
 	CChromaSDKImpl m_ChromaSDKImpl = *((CChromaSDKImpl*)vpParam);
 
+	unsigned char R = 0;
+	unsigned char G = 0;
+	unsigned char B = 0;
+	unsigned char DeviceType = 6;
+	unsigned char EffectType = 0;
+	unsigned char DirectionType = 0;
+	unsigned char MessageType = 0;
+
 	m_ChromaSDKImpl.Initialize();
 	asusInitialized = m_ChromaSDKImpl.initASUS();
 
@@ -244,17 +252,10 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 	m_ChromaSDKImpl.PlayMessage(message, 750);
 
 	//apply the initial status
-	m_ChromaSDKImpl.ShowColor(MOUSE_DEVICES, GREEN);
-	m_ChromaSDKImpl.ShowColor(KEYBOARD_DEVICES, GREEN);
-	m_ChromaSDKImpl.ShowColor(MOUSEMAT_DEVICES, GREEN);
+	m_ChromaSDKImpl.SetRazerDeviceColor(DeviceType, GREEN);
 
 	socket->Bind(ipep);
 	socket->ReceiveTimeout = 500;
-
-	unsigned char R = 0;
-	unsigned char G = 0;
-	unsigned char B = 0;
-	unsigned char D = 0;
 
 	while (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0)
 	{
@@ -270,20 +271,54 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 			Sleep(1000);
 		}
 
-		//disregard any other message than RBG values
-		if (message[0] == 'R')
+		MessageType = message[0];
+
+		//if first byte is R, it's a change color command
+		if (MessageType == 'R')
 		{
+			//Valid values are 8 bits, 0-255
 			R = ((unsigned char)message[1]);
 			G = ((unsigned char)message[3]);
 			B = ((unsigned char)message[5]);
-			D = ((unsigned char)message[7]);
-
+			
+			//Valid values:
+			//1 - Keyboard devices
+			//2 - Mousepad devices
+			//3 - Mouse devices
+			//4 - Headset devices
+			//5 - Keypad devices
+			//6 - All devices
+			DeviceType = ((unsigned char)message[7]);
+			
 			//apply the status
-			m_ChromaSDKImpl.ShowColor(MOUSE_DEVICES, RGB(R, G, B));
-			m_ChromaSDKImpl.ShowColor(KEYBOARD_DEVICES, RGB(R, G, B));
-			m_ChromaSDKImpl.ShowColor(MOUSEMAT_DEVICES, RGB(R, G, B));
+			m_ChromaSDKImpl.SetRazerDeviceColor(DeviceType, RGB(R, G, B));
+
 			if(asusInitialized)
 				m_ChromaSDKImpl.SetGPULights(R, G, B);
+		}
+		//if first byte is 3, then it's effect mode
+		else if (MessageType == 3)
+		{
+			DeviceType = ((unsigned char)message[1]);
+			EffectType = ((unsigned char)message[2]);
+			DirectionType = ((unsigned char)message[3]);
+
+			switch (EffectType)
+			{
+			//Breathing
+			case 0:
+				break;
+			//Reactive
+			case 1:
+				break;
+			//Wave
+			case 2:
+				m_ChromaSDKImpl.SetRazerDeviceWaveEffect(DeviceType, DirectionType);
+				break;
+			//Spectrum
+			case 3:
+				break;
+			}
 		}
 	}
 	socket->Close();
