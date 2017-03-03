@@ -22,7 +22,7 @@ CChromaSDKImpl m_ChromaSDKImpl;
 
 int _tmain (int argc, TCHAR *argv[])
 {
-	//Sleep(10000);
+	Sleep(10000);
     OutputDebugString(_T("My Sample Service: Main: Entry"));
 
     SERVICE_TABLE_ENTRY ServiceTable[] = 
@@ -232,7 +232,8 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 {
 	Socket^ socket = gcnew Socket(AddressFamily::InterNetwork, SocketType::Dgram, ProtocolType::Udp);
 	IPEndPoint^ ipep = gcnew IPEndPoint(IPAddress::Any, 30303);
-	bool asusInitialized;
+	bool asusGPUInitialized;
+	bool asusMOBOInitialized;
 
 	CChromaSDKImpl m_ChromaSDKImpl = *((CChromaSDKImpl*)vpParam);
 
@@ -245,7 +246,8 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 	unsigned char MessageType = 0;
 
 	m_ChromaSDKImpl.Initialize();
-	asusInitialized = m_ChromaSDKImpl.initASUS();
+	asusGPUInitialized = m_ChromaSDKImpl.initASUSGPU();
+	asusMOBOInitialized = m_ChromaSDKImpl.initASUSMOBO();
 
 	//Add initialization with a welcome!!!
 	String^ message = "welcome";
@@ -292,9 +294,14 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 			
 			//apply the status
 			m_ChromaSDKImpl.SetRazerDeviceColor(DeviceType, RGB(R, G, B));
-
-			if(asusInitialized)
+			if (asusGPUInitialized)
+			{
 				m_ChromaSDKImpl.SetGPULights(R, G, B);
+			}
+			if (asusMOBOInitialized)
+			{
+				m_ChromaSDKImpl.SetMOBOLights(R, G, B);
+			}
 		}
 		//if first byte is 3, then it's effect mode
 		else if (MessageType == 3)

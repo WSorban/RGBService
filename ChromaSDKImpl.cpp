@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "ChromaSDKImpl.h"
-#include "ASUS GPU.h"
+#include "AsusSDKDefines.h"
 
 #ifdef _WIN64
 #define CHROMASDKDLL        _T("RzChromaSDK64.dll")
@@ -126,6 +126,58 @@ BOOL CChromaSDKImpl::UnInitialize()
 	}
 
 	return FALSE;
+}
+
+bool CChromaSDKImpl::initASUSGPU()
+{
+	AsusVGADLL = LoadLibraryW(L"VGA_Extra.dll");
+	if (!AsusVGADLL)
+		return FALSE;
+
+	LoadVenderDLL = (LoadVenderDLL_t)GetProcAddress(AsusVGADLL, "LoadVenderDLL");
+	if (LoadVenderDLL() == -1)
+		return FALSE;
+
+	Get_LED_ExternalFan_Info = (Get_LED_ExternalFan_Info_t)GetProcAddress(AsusVGADLL, "Get_LED_ExternalFan_Info");
+	Set_LED_ExternalFan_Info = (Set_LED_ExternalFan_Info_t)GetProcAddress(AsusVGADLL, "Set_LED_ExternalFan_Info");
+	DetectControlIC = (DetectControlIC_t)GetProcAddress(AsusVGADLL, "DetectControlIC");
+	GetOSInfo = (GetOSInfo_t)GetProcAddress(AsusVGADLL, "GetOSInfo");
+
+	return Get_LED_ExternalFan_Info 
+		&& Set_LED_ExternalFan_Info 
+		&& DetectControlIC 
+		&& GetOSInfo;
+}
+
+bool CChromaSDKImpl::initASUSMOBO()
+{
+	AsusMOBODLL = LoadLibraryW(L"D:\\VisualStudio\\RGBService\\LED_DLL_forMB.dll");
+	if (!AsusMOBODLL)
+		return FALSE;
+
+	/*fnGetInterfaceVersion
+	fnEnumSupportDevice
+	fnGetLEDConfig*/
+	fnSetLEDON = (fnSetLEDON_t)GetProcAddress(AsusMOBODLL, "fnSetLEDON");
+	fnSetLEDEFFECT = (fnSetLEDEFFECT_t)GetProcAddress(AsusMOBODLL, "fnSetLEDEFFECT");
+	fnGetLEDEFFECT = (fnGetLEDEFFECT_t)GetProcAddress(AsusMOBODLL, "fnGetLEDEFFECT");
+	fnSetLEDColor = (fnSetLEDColor_t)GetProcAddress(AsusMOBODLL, "fnSetLEDColor");
+	fnGetLEDColor = (fnGetLEDColor_t)GetProcAddress(AsusMOBODLL, "fnGetLEDColor");
+	fnEffectReset = (fnEffectReset_t)GetProcAddress(AsusMOBODLL, "fnEffectReset");
+	/*fnSetLEDFrame
+	fnGetLEDFrame
+	fnGetLEDBurn
+	fnSetLEDBurn
+	fnGetGPUTemperatureColor
+	fnGetLastError_VGA_AURA
+	fnLoadDefaultSetting*/
+
+	return fnSetLEDON
+		&& fnSetLEDEFFECT
+		&& fnGetLEDEFFECT
+		&& fnSetLEDColor
+		&& fnGetLEDColor
+		&& fnEffectReset;
 }
 
 void SetRazerKeyboardColor(COLORREF Color)
@@ -292,9 +344,40 @@ void SetRazerKeyboardWaveEffect(UINT Direction)
 	}
 }
 
+void DebugValueUsingMousePad(UINT number)
+{
+	ChromaSDK::Mousepad::CUSTOM_EFFECT_TYPE f = {};
+	switch (number)
+	{
+	case 0:
+		for (UINT led = 0; led<ChromaSDK::Mousepad::MAX_LEDS; led++)
+		{
+			f.Color[led] = RED;
+		}
+		number = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_CUSTOM, &f, NULL);
+		break;
+	/*case 1:
+		f.Color = GREEN;
+		number = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_STATIC, &f, NULL);
+		break;
+	case 2:
+		f.Color = BLUE;
+		number = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_STATIC, &f, NULL);
+		break;
+	case 3:
+		f.Color = YELLOW;
+		number = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_STATIC, &f, NULL);
+		break;
+	default:
+		f.Color = CYAN;
+		number = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_STATIC, &f, NULL);
+		break;*/
+	}
+	ASSERT(number == RZRESULT_SUCCESS);
+}
+
 void SetRazerMousepadWaveEffect(UINT Direction)
 {
-	UINT dummy = 0;
 	if (CreateKeyboardEffect)
 	{
 		//This effect will not do transition
@@ -303,11 +386,9 @@ void SetRazerMousepadWaveEffect(UINT Direction)
 		{
 		case 1:
 			Effect.DIRECTION_LEFT_TO_RIGHT;
-			dummy = 1;
 			break;
 		case 0:
 			Effect.DIRECTION_RIGHT_TO_LEFT;
-			dummy = 2;
 			break;
 		}
 		Effect.DIRECTION_RIGHT_TO_LEFT;
@@ -449,7 +530,7 @@ BOOL CChromaSDKImpl::IsDeviceConnected(RZDEVICEID DeviceId)
 	return FALSE;
 }
 
-void CChromaSDKImpl::DebugUsingMousePad(int Result)
+void CChromaSDKImpl::DebugStateUsingMousePad(int Result)
 {
 	ChromaSDK::Mousepad::STATIC_EFFECT_TYPE f = {};
 	f = {};
@@ -688,20 +769,12 @@ void CChromaSDKImpl::SetGPULights(unsigned char r, unsigned char g, unsigned cha
 	Set_LED_ExternalFan_Info(Options);
 }
 
-bool CChromaSDKImpl::initASUS()
+void CChromaSDKImpl::SetMOBOLights(unsigned char r, unsigned char g, unsigned char b)
 {
-	AsusDLL = LoadLibraryW(L"VGA_Extra.dll");
-	if (!AsusDLL)
-		return FALSE;
-
-	LoadVenderDLL = (LoadVenderDLL_t)GetProcAddress(AsusDLL, "LoadVenderDLL");
-	if (LoadVenderDLL() == -1)
-		return FALSE;
-
-	Get_LED_ExternalFan_Info = (Get_LED_ExternalFan_Info_t)GetProcAddress(AsusDLL, "Get_LED_ExternalFan_Info");
-	Set_LED_ExternalFan_Info = (Set_LED_ExternalFan_Info_t)GetProcAddress(AsusDLL, "Set_LED_ExternalFan_Info");
-	DetectControlIC = (DetectControlIC_t)GetProcAddress(AsusDLL, "DetectControlIC");
-	GetOSInfo = (GetOSInfo_t)GetProcAddress(AsusDLL, "GetOSInfo");
-
-	return Get_LED_ExternalFan_Info && Set_LED_ExternalFan_Info && DetectControlIC && GetOSInfo;
+	MoboOptions_t Options;
+	memset(&Options, 0, sizeof(Options));
+	Options.R = r;
+	Options.G = g;
+	Options.B = b;
+	//fnSetLEDColor(Options);
 }

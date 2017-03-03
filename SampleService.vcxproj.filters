@@ -44,7 +44,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ASUS GPU.h">
+    <ClInclude Include="AsusSDKDefines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

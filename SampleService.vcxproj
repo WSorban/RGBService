@@ -12,9 +12,10 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D6E78055-7BC4-4301-BDFC-C4DDA35E959C}</ProjectGuid>
-    <RootNamespace>SampleService</RootNamespace>
+    <RootNamespace>RGBService</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>RGBService</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -122,7 +123,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ASUS GPU.h" />
+    <ClInclude Include="AsusSDKDefines.h" />
     <ClInclude Include="ChromaSDKImpl.h" />
     <ClInclude Include="ChromaSDK\inc\RzChromaSDKDefines.h" />
     <ClInclude Include="ChromaSDK\inc\RzChromaSDKTypes.h" />

@@ -39,16 +39,19 @@ public:
 	BOOL Initialize();
 	BOOL UnInitialize();
 
+
 	void SetRazerDeviceColor(UINT DeviceType, COLORREF Color);
 	void SetRazerDeviceBreathingEffect(UINT DeviceType, COLORREF Color);
 	void SetRazerDeviceReactiveEffect(UINT DeviceType, COLORREF Color);
 	void SetRazerDeviceWaveEffect(UINT DeviceType, UINT Direction);
 	void ResetEffects(UINT DeviceType);
 	BOOL IsDeviceConnected(RZDEVICEID DeviceId);
-	void DebugUsingMousePad(int Result);
+	void DebugStateUsingMousePad(int Result);
 	void PlayMessage(String^ message, int displaySpeed);
-	bool initASUS();
 	void SetGPULights(unsigned char r, unsigned char b, unsigned char g);
+	void SetMOBOLights(unsigned char r, unsigned char g, unsigned char b);
+	bool initASUSGPU();
+	bool initASUSMOBO();
 
 private:
 	HMODULE m_ChromaSDKModule;

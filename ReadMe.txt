@@ -22,4 +22,13 @@ Also big shout out for iMoD1998, for decoding the ASUS ROG GPU led code.
 More info here:
 https://www.youtube.com/watch?v=37iOmKfJJPs
 
+This project is using the C++ Razer Chroma SDK, found here:
+https://github.com/ChromaSDK/OfficialSample
+
+The Windows Service is based on this code:
+https://www.codeproject.com/Articles/499465/Simple-Windows-Service-in-Cplusplus
+
+The UDP server code is based on this:
+http://www.java2s.com/Code/Cpp.net/Network/UdpServerwithSocket.htm
+
 Enjoy!
