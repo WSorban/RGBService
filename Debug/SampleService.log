@@ -1,5 +1,3 @@
-﻿  ChromaSDKImpl.cpp
-ChromaSDKImpl.cpp(1003): warning C4244: 'argument': conversion from 'wchar_t' to 'char', possible loss of data
-  SampleServiceMain.cpp
-SampleServiceMain.cpp(221): warning C4101: 'e': unreferenced local variable
+﻿  ServiceMain.cpp
+ServiceMain.cpp(221): warning C4101: 'e': unreferenced local variable
   SampleService.vcxproj -> D:\VisualStudio\RGBService\Debug\RGBService.exe

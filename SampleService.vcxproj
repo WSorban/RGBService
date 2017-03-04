@@ -106,7 +106,7 @@
     <ClCompile Include="ChromaSDKImpl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SampleServiceMain.cpp">
+    <ClCompile Include="ServiceMain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
     </ClCompile>
