@@ -412,9 +412,213 @@ void CChromaSDKImpl::SetRazerDeviceBreathingEffect(UINT DeviceType, COLORREF Col
 	}
 }
 
-void CChromaSDKImpl::SetRazerDeviceReactiveEffect(UINT DeviceType, COLORREF Color)
+void SetRazerKeyboardSpectrumEffect()
 {
+	if (CreateKeyboardEffect)
+	{
+		RZRESULT Result = CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_SPECTRUMCYCLING, NULL, NULL);
 
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void SetRazerMousepadSpectrumEffect()
+{
+	if (CreateMousepadEffect)
+	{
+		RZRESULT Result = CreateMousepadEffect(ChromaSDK::Mousepad::CHROMA_SPECTRUMCYCLING, NULL, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void SetRazerMouseSpectrumEffect()
+{
+	if (CreateMouseEffect)
+	{
+		RZRESULT Result = CreateMouseEffect(ChromaSDK::Mouse::CHROMA_SPECTRUMCYCLING, NULL, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void SetRazerHeadsetSpectrumEffect()
+{
+	if (CreateHeadsetEffect)
+	{
+		RZRESULT Result = CreateHeadsetEffect(ChromaSDK::Headset::CHROMA_SPECTRUMCYCLING, NULL, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void SetRazerKeypadSpectrumEffect()
+{
+	if (CreateKeypadEffect)
+	{
+		RZRESULT Result = CreateKeypadEffect(ChromaSDK::Keypad::CHROMA_SPECTRUMCYCLING, NULL, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void CChromaSDKImpl::SetRazerDeviceSpectrumEffect(UINT DeviceType)
+{
+	switch (DeviceType)
+	{
+	case 1:
+		//ResetEffects(DeviceType);
+		SetRazerKeyboardSpectrumEffect();
+		break;
+	case 2:
+		SetRazerMousepadSpectrumEffect();
+		break;
+	case 3:
+		SetRazerMouseSpectrumEffect();
+		break;
+	case 4:
+		SetRazerHeadsetSpectrumEffect();
+		break;
+	case 5:
+		SetRazerKeypadSpectrumEffect();
+		break;
+	case 6:
+		//ResetEffects(DeviceType);
+		SetRazerKeyboardSpectrumEffect();
+		SetRazerMousepadSpectrumEffect();
+		SetRazerMouseSpectrumEffect();
+		SetRazerHeadsetSpectrumEffect();
+		SetRazerKeypadSpectrumEffect();
+		break;
+	}
+}
+
+void SetRazerKeyboardReactiveEffect(UINT Duration, COLORREF Color)
+{
+	if (CreateKeyboardEffect)
+	{
+		ChromaSDK::Keyboard::REACTIVE_EFFECT_TYPE Effect = {};
+		Effect.Color = Color;
+		switch (Duration)
+		{
+		case 0:
+			Effect.DURATION_SHORT;
+			break;
+		case 1:
+			Effect.DURATION_MEDIUM;
+			break;
+		case 2:
+			Effect.DURATION_LONG;
+			break;
+		}
+
+		RZRESULT Result = CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_REACTIVE, &Effect, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+//No reactive for mousepad (but there is, in Synapse
+/*void SetRazerMousepadReactiveEffect(UINT Duration, COLORREF Color)
+{
+	if (CreateMousepadEffect)
+	{
+		ChromaSDK::Mousepad::REACTIVE_EFFECT_TYPE Effect = {};
+		Effect.Color = Color;
+		switch(Duration)
+		{
+		case 0:
+			Effect.DURATION_SHORT;
+			break;
+		case 1:
+			Effect.DURATION_MEDIUM;
+			break;
+		case 2:
+			Effect.DURATION_LONG;
+			break;
+		}
+
+		RZRESULT Result = CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_REACTIVE, &Effect, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}*/
+
+void SetRazerMouseReactiveEffect(UINT Duration, COLORREF Color)
+{
+	if (CreateMouseEffect)
+	{
+		ChromaSDK::Mouse::REACTIVE_EFFECT_TYPE Effect = {};
+		Effect.Color = Color;
+		switch (Duration)
+		{
+		case 0:
+			Effect.DURATION_SHORT;
+			break;
+		case 1:
+			Effect.DURATION_MEDIUM;
+			break;
+		case 2:
+			Effect.DURATION_LONG;
+			break;
+		}
+
+		RZRESULT Result = CreateMouseEffect(ChromaSDK::Mouse::CHROMA_REACTIVE, &Effect, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void SetRazerKeypadReactiveEffect(UINT Duration, COLORREF Color)
+{
+	if (CreateKeyboardEffect)
+	{
+		ChromaSDK::Keypad::REACTIVE_EFFECT_TYPE Effect = {};
+		Effect.Color = Color;
+		switch (Duration)
+		{
+		case 0:
+			Effect.DURATION_SHORT;
+			break;
+		case 1:
+			Effect.DURATION_MEDIUM;
+			break;
+		case 2:
+			Effect.DURATION_LONG;
+			break;
+		}
+
+		RZRESULT Result = CreateKeypadEffect(ChromaSDK::Keypad::CHROMA_REACTIVE, &Effect, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
+void CChromaSDKImpl::SetRazerDeviceReactiveEffect(UINT DeviceType, UINT Duration, COLORREF Color)
+{
+	switch (DeviceType)
+	{
+	case 1:
+		//ResetEffects(DeviceType);
+		SetRazerKeyboardReactiveEffect(Duration, Color);
+		break;
+	/*case 2:
+		SetRazerMousepadReactiveEffect(Duration, Color);
+		break;*/
+	case 3:
+		SetRazerMouseReactiveEffect(Duration, Color);
+		break;
+	case 5:
+		SetRazerKeypadReactiveEffect(Duration, Color);
+		break;
+	case 6:
+		//ResetEffects(DeviceType);
+		SetRazerKeyboardReactiveEffect(Duration, Color);
+		//SetRazerMousepadReactiveEffect(Duration, Color);
+		SetRazerMouseReactiveEffect(Duration, Color);
+		SetRazerKeypadReactiveEffect(Duration, Color);
+		break;
+	}
 }
 
 void SetRazerKeyboardWaveEffect(UINT Direction)

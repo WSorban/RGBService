@@ -271,6 +271,7 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 				break;
 			//Reactive
 			case 1:
+				m_ChromaSDKImpl.SetRazerDeviceReactiveEffect(DeviceType, DirectionType, RGB(R, G, B));
 				break;
 			//Wave
 			case 2:
@@ -278,6 +279,7 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 				break;
 			//Spectrum
 			case 3:
+				m_ChromaSDKImpl.SetRazerDeviceSpectrumEffect(DeviceType);
 				break;
 			}
 		}

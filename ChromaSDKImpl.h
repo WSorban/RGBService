@@ -42,7 +42,8 @@ public:
 
 	void SetRazerDeviceColor(UINT DeviceType, COLORREF Color);
 	void SetRazerDeviceBreathingEffect(UINT DeviceType, COLORREF Color);
-	void SetRazerDeviceReactiveEffect(UINT DeviceType, COLORREF Color);
+	void SetRazerDeviceSpectrumEffect(UINT DeviceType);
+	void SetRazerDeviceReactiveEffect(UINT DeviceType, UINT Duration, COLORREF Color);
 	void SetRazerDeviceWaveEffect(UINT DeviceType, UINT Direction);
 	void ResetEffects(UINT DeviceType);
 	BOOL IsDeviceConnected(RZDEVICEID DeviceId);
