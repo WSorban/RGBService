@@ -22,7 +22,7 @@ CChromaSDKImpl m_ChromaSDKImpl;
 
 int _tmain (int argc, TCHAR *argv[])
 {
-	Sleep(10000);
+	//Sleep(10000);
     OutputDebugString(_T("My Sample Service: Main: Entry"));
 
     SERVICE_TABLE_ENTRY ServiceTable[] = 
@@ -178,56 +178,6 @@ VOID WINAPI ServiceCtrlHandler (DWORD CtrlCode)
     OutputDebugString(_T("My Sample Service: ServiceCtrlHandler: Exit"));
 }
 
-
-/*DWORD WINAPI ServiceWorkerThread (LPVOID lpParam)
-{
-    OutputDebugString(_T("My Sample Service: ServiceWorkerThread: Entry"));
-	Socket^ socket = gcnew Socket(AddressFamily::InterNetwork, SocketType::Dgram, ProtocolType::Udp);
-	IPEndPoint^ ipep = gcnew IPEndPoint(IPAddress::Any, 30303);
-
-	CChromaSDKImpl m_ChromaSDKImpl = *((CChromaSDKImpl*)lpParam);
-
-	socket->Bind(ipep);
-
-	unsigned char R = 0;
-	unsigned char G = 0;
-	unsigned char B = 0;
-	unsigned char D = 0;
-
-    //  Periodically check if the service has been requested to stop
-	//while(true)
-    while (WaitForSingleObject(g_ServiceStopEvent, 0) != WAIT_OBJECT_0)
-    {
-		array<unsigned char>^ message = gcnew array<unsigned char>(12);
-		EndPoint^ Remote = (EndPoint^) gcnew IPEndPoint(IPAddress::Any, 0);
-
-		int recv = socket->ReceiveFrom(message, Remote);
-
-		//disregard any other message than RBG values
-		if (message[0] == 'R')
-		{
-			R = ((unsigned char)message[1]);
-			G = ((unsigned char)message[3]);
-			B = ((unsigned char)message[5]);
-			D = ((unsigned char)message[7]);
-			
-			//CString str("R: " + R + " G: " + G + " B: " + B);
-			//LPCWSTR a = (LPCWSTR)str;
-			//OutputDebugString(a);
-			//apply the status
-			m_ChromaSDKImpl.ShowColor(MOUSE_DEVICES, RGB(R, G, B));
-			m_ChromaSDKImpl.ShowColor(KEYBOARD_DEVICES, RGB(R, G, B));
-			m_ChromaSDKImpl.ShowColor(MOUSEMAT_DEVICES, RGB(R, G, B));
-		}
-        //Sleep(3000);
-    }
-	socket->Close();
-    OutputDebugString(_T("My Sample Service: ServiceWorkerThread: Exit"));
-
-    return ERROR_SUCCESS;
-}*/
-
-
 DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 {
 	Socket^ socket = gcnew Socket(AddressFamily::InterNetwork, SocketType::Dgram, ProtocolType::Udp);
@@ -309,11 +259,15 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 			DeviceType = ((unsigned char)message[1]);
 			EffectType = ((unsigned char)message[2]);
 			DirectionType = ((unsigned char)message[3]);
+			R = ((unsigned char)message[5]);
+			G = ((unsigned char)message[7]);
+			B = ((unsigned char)message[9]);
 
 			switch (EffectType)
 			{
 			//Breathing
 			case 0:
+				m_ChromaSDKImpl.SetRazerDeviceBreathingEffect(DeviceType, RGB(R, G, B));
 				break;
 			//Reactive
 			case 1:
