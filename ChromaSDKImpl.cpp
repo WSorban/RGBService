@@ -376,9 +376,6 @@ void CChromaSDKImpl::SetRazerDeviceBreathingEffect(UINT DeviceType, COLORREF Col
 	case 2:
 		SetRazerMousepadBreathingEffect(Color);
 		break;
-	/*case 3:
-		SetRazerMouseBreathingEffect(Color);
-		break;*/
 	case 4:
 		SetRazerHeadsetBreathingEffect(Color);
 		break;
@@ -388,7 +385,6 @@ void CChromaSDKImpl::SetRazerDeviceBreathingEffect(UINT DeviceType, COLORREF Col
 	case 6:
 		SetRazerKeyboardBreathingEffect(Color);
 		SetRazerMousepadBreathingEffect(Color);
-		//SetRazerMouseBreathingEffect(Color);
 		SetRazerHeadsetBreathingEffect(Color);
 		SetRazerKeypadBreathingEffect(Color);
 		break;
@@ -624,6 +620,33 @@ void SetRazerMousepadWaveEffect(UINT Direction)
 	}
 }
 
+void SetRazerKeypadWaveEffect(UINT Direction)
+{
+	if (CreateMousepadEffect)
+	{
+		ChromaSDK::Keypad::WAVE_EFFECT_TYPE Effect = {};
+
+		switch (Direction) {
+		case -1:
+			Effect.Direction = Effect.DIRECTION_NONE;
+			break;
+		case 0:
+			Effect.Direction = Effect.DIRECTION_LEFT_TO_RIGHT;
+			break;
+		case 1:
+			Effect.Direction = Effect.DIRECTION_RIGHT_TO_LEFT;
+			break;
+		default:
+			Effect.Direction = Effect.DIRECTION_INVALID;
+			break;
+		}
+
+		RZRESULT Result = CreateKeypadEffect(ChromaSDK::Keypad::CHROMA_WAVE, &Effect, NULL);
+
+		ASSERT(Result == RZRESULT_SUCCESS);
+	}
+}
+
 void CChromaSDKImpl::SetRazerDeviceWaveEffect(UINT DeviceType, UINT Direction)
 {
 	switch (DeviceType)
@@ -634,9 +657,13 @@ void CChromaSDKImpl::SetRazerDeviceWaveEffect(UINT DeviceType, UINT Direction)
 	case 2:
 		SetRazerMousepadWaveEffect(Direction);
 		break;
+	case 4:
+		SetRazerKeypadWaveEffect(Direction);
+		break;
 	default:
 		SetRazerKeyboardWaveEffect(Direction);
 		SetRazerMousepadWaveEffect(Direction);
+		SetRazerKeypadWaveEffect(Direction);
 		break;
 	}
 }
