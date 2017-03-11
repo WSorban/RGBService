@@ -912,9 +912,11 @@ DWORD WINAPI ThreadPlayMessage(LPVOID lParam)
 	Keyboard::CUSTOM_KEY_EFFECT_TYPE CustEffect = {};
 	Keyboard::STATIC_EFFECT_TYPE StatEffect = {};
 
-	CString message = *((CString*)lParam);
-	OutputDebugString(message.AllocSysString());
-	UINT* RazerKeys = new UINT[message.GetLength()];
+	std::string message = *((std::string*)lParam);
+	CString msg(message.c_str());
+
+	OutputDebugString(msg.AllocSysString());
+	UINT* RazerKeys = new UINT[msg.GetLength()];
 
 
 	StatEffect.Color = GREEN;
@@ -922,28 +924,22 @@ DWORD WINAPI ThreadPlayMessage(LPVOID lParam)
 	RZRESULT Result;
 
 	// Write the welcome message
-	for (int j = 0; j < message.GetLength(); j++)
+	for (int j = 0; j < msg.GetLength(); j++)
 	{
-		RazerKeys[j] = getKeyRefByName(message.GetAt(j));
+		RazerKeys[j] = getKeyRefByName(msg.GetAt(j));
 		COLORREF Color = 0x01000000 | ActiveKeysData.Color;
 		CustEffect.Key[HIBYTE(RazerKeys[j])][LOBYTE(RazerKeys[j])] = Color;
 		CreateKeyboardEffect(Keyboard::CHROMA_CUSTOM_KEY, &CustEffect, NULL);
 		Sleep(750);
 	}
 
-	//End the effect in green
-	Result = CreateKeyboardEffect(ChromaSDK::Keyboard::CHROMA_STATIC, &StatEffect, NULL);
-
-	ASSERT(Result == RZRESULT_SUCCESS);
-
 	delete[] RazerKeys;
 
 	return 0;
 }
 
-void CChromaSDKImpl::PlayMessage(String^ message, int displaySpeed) {
-	CString msg = CString(message);
-	HANDLE hThread = CreateThread(NULL, 0, ThreadPlayMessage, &msg, 0, NULL);
+void CChromaSDKImpl::PlayMessage(std::string message, int displaySpeed) {
+	HANDLE hThread = CreateThread(NULL, 0, ThreadPlayMessage, &message, 0, NULL);
 	if (WaitForSingleObject(hThread, 5000) == WAIT_OBJECT_0)
 	{
 		CloseHandle(hThread);
