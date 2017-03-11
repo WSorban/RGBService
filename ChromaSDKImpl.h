@@ -7,7 +7,6 @@
 #include "RzChromaSDKDefines.h"
 #include "RzChromaSDKTypes.h"
 #include "RzErrors.h"
-#include <String>
 
 using namespace System;
 
@@ -48,7 +47,8 @@ public:
 	void SetRazerDeviceWaveEffect(UINT DeviceType, UINT Direction);
 	void ResetEffects(UINT DeviceType);
 	BOOL IsDeviceConnected(RZDEVICEID DeviceId);
-	void PlayMessage(std::string message, int displaySpeed);
+	void DebugStateUsingMousePad(int Result);
+	void PlayMessage(String^ message, int displaySpeed);
 	void SetGPULights(unsigned char r, unsigned char b, unsigned char g);
 	void SetMOBOLights(unsigned char r, unsigned char g, unsigned char b);
 	bool initASUSGPU();

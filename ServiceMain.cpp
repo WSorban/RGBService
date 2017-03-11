@@ -1,21 +1,11 @@
 #include <Windows.h>
 #include <tchar.h>
 #include "ChromaSDKImpl.h"
-#include "SettingsHandler.h"
 
 using namespace System;
 using namespace System::Net;
 using namespace System::Net::Sockets;
 
-#define BUFSIZE MAX_PATH
-
-bool asusGPUInitialized;
-bool asusMOBOInitialized;
-std::string messageString;
-
-const int settingsSize = 6;
-std::string settings[settingsSize];
-const std::string settingsFile = "D:\\VisualStudio\\RGBService\\Debug\\settings.txt";
 
 SERVICE_STATUS        g_ServiceStatus = {0};
 SERVICE_STATUS_HANDLE g_StatusHandle = NULL;
@@ -28,6 +18,7 @@ DWORD WINAPI ServiceWorkerThread (LPVOID vpParam);
 CChromaSDKImpl m_ChromaSDKImpl;
 
 #define SERVICE_NAME  _T("RzrService")
+
 
 int _tmain (int argc, TCHAR *argv[])
 {
@@ -129,9 +120,6 @@ VOID WINAPI ServiceMain (DWORD argc, LPTSTR *argv)
      */
     OutputDebugString(_T("My Sample Service: ServiceMain: Performing Cleanup Operations"));
 
-	//Save the settings, based on what was captured until this point
-	settingsSaver(settingsFile, settings, settingsSize);
-
     CloseHandle (g_ServiceStopEvent);
 
     g_ServiceStatus.dwControlsAccepted = 0;
@@ -190,8 +178,15 @@ VOID WINAPI ServiceCtrlHandler (DWORD CtrlCode)
     OutputDebugString(_T("My Sample Service: ServiceCtrlHandler: Exit"));
 }
 
-void applyEffect(std::string message)
+DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 {
+	Socket^ socket = gcnew Socket(AddressFamily::InterNetwork, SocketType::Dgram, ProtocolType::Udp);
+	IPEndPoint^ ipep = gcnew IPEndPoint(IPAddress::Any, 30303);
+	bool asusGPUInitialized;
+	bool asusMOBOInitialized;
+
+	CChromaSDKImpl m_ChromaSDKImpl = *((CChromaSDKImpl*)vpParam);
+
 	unsigned char R = 0;
 	unsigned char G = 0;
 	unsigned char B = 0;
@@ -200,91 +195,16 @@ void applyEffect(std::string message)
 	unsigned char DirectionType = 0;
 	unsigned char MessageType = 0;
 
-	MessageType = message[0];
-
-	//if first byte is R, it's a change color command
-	if (MessageType == 'R')
-	{
-		//Valid values are 8 bits, so possible values are 0-255
-		R = ((unsigned char)message[1]);
-		G = ((unsigned char)message[3]);
-		B = ((unsigned char)message[5]);
-
-		//Valid values:
-		//1 - Keyboard devices
-		//2 - Mousepad devices
-		//3 - Mouse devices
-		//4 - Headset devices
-		//5 - Keypad devices
-		//6 - All devices
-		DeviceType = ((unsigned char)message[7]);
-
-		//apply the status
-		m_ChromaSDKImpl.SetRazerDeviceColor(DeviceType, RGB(R, G, B));
-		if (asusGPUInitialized)
-		{
-			m_ChromaSDKImpl.SetGPULights(R, G, B);
-		}
-		if (asusMOBOInitialized)
-		{
-			m_ChromaSDKImpl.SetMOBOLights(R, G, B);
-		}
-	}
-	//if first byte is 3, then it's effect mode
-	else if (MessageType == 3)
-	{
-		DeviceType = ((unsigned char)message[1]);
-		EffectType = ((unsigned char)message[2]);
-		DirectionType = ((unsigned char)message[3]);
-		R = ((unsigned char)message[5]);
-		G = ((unsigned char)message[7]);
-		B = ((unsigned char)message[9]);
-
-		switch (EffectType)
-		{
-			//Breathing
-		case 0:
-			m_ChromaSDKImpl.SetRazerDeviceBreathingEffect(DeviceType, RGB(R, G, B));
-			break;
-			//Reactive
-		case 1:
-			m_ChromaSDKImpl.SetRazerDeviceReactiveEffect(DeviceType, DirectionType, RGB(R, G, B));
-			break;
-			//Wave
-		case 2:
-			m_ChromaSDKImpl.SetRazerDeviceWaveEffect(DeviceType, DirectionType);
-			break;
-			//Spectrum
-		case 3:
-			m_ChromaSDKImpl.SetRazerDeviceSpectrumEffect(DeviceType);
-			break;
-		}
-	}
-}
-
-void LoadAndApplySettings()
-{
-	settingsLoader(settingsFile, settings);
-	m_ChromaSDKImpl.PlayMessage(settings[0], 750);
-
-	for (int i = 0; i < settingsSize; i++)
-	{
-		applyEffect(settings[i]);
-	}
-}
-
-DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
-{
-	Socket^ socket = gcnew Socket(AddressFamily::InterNetwork, SocketType::Dgram, ProtocolType::Udp);
-	IPEndPoint^ ipep = gcnew IPEndPoint(IPAddress::Any, 30303);
-
-	CChromaSDKImpl m_ChromaSDKImpl = *((CChromaSDKImpl*)vpParam);
-
 	m_ChromaSDKImpl.Initialize();
 	asusGPUInitialized = m_ChromaSDKImpl.initASUSGPU();
 	asusMOBOInitialized = m_ChromaSDKImpl.initASUSMOBO();
 
-	LoadAndApplySettings();
+	//Add initialization with a welcome!!!
+	String^ message = "welcome";
+	m_ChromaSDKImpl.PlayMessage(message, 750);
+
+	//apply the initial status
+	m_ChromaSDKImpl.SetRazerDeviceColor(DeviceType, GREEN);
 
 	socket->Bind(ipep);
 	socket->ReceiveTimeout = 500;
@@ -297,17 +217,71 @@ DWORD WINAPI ServiceWorkerThread(LPVOID vpParam)
 		try
 		{
 			int recv = socket->ReceiveFrom(message, Remote);
-
-			if (message[0] == 'R' || message[0] == 3)
-			{
-				messageString = ConvertCLIPointerToStdString(message);
-				applyEffect(messageString);
-				settingsBuilder(settings, messageString);
-			}
 		}
 		catch (SocketException^ e) 
 		{
 			Sleep(1000);
+		}
+
+		MessageType = message[0];
+
+		//if first byte is R, it's a change color command
+		if (MessageType == 'R')
+		{
+			//Valid values are 8 bits, 0-255
+			R = ((unsigned char)message[1]);
+			G = ((unsigned char)message[3]);
+			B = ((unsigned char)message[5]);
+			
+			//Valid values:
+			//1 - Keyboard devices
+			//2 - Mousepad devices
+			//3 - Mouse devices
+			//4 - Headset devices
+			//5 - Keypad devices
+			//6 - All devices
+			DeviceType = ((unsigned char)message[7]);
+			
+			//apply the status
+			m_ChromaSDKImpl.SetRazerDeviceColor(DeviceType, RGB(R, G, B));
+			if (asusGPUInitialized)
+			{
+				m_ChromaSDKImpl.SetGPULights(R, G, B);
+			}
+			if (asusMOBOInitialized)
+			{
+				m_ChromaSDKImpl.SetMOBOLights(R, G, B);
+			}
+		}
+		//if first byte is 3, then it's effect mode
+		else if (MessageType == 3)
+		{
+			DeviceType = ((unsigned char)message[1]);
+			EffectType = ((unsigned char)message[2]);
+			DirectionType = ((unsigned char)message[3]);
+			R = ((unsigned char)message[5]);
+			G = ((unsigned char)message[7]);
+			B = ((unsigned char)message[9]);
+
+			switch (EffectType)
+			{
+			//Breathing
+			case 0:
+				m_ChromaSDKImpl.SetRazerDeviceBreathingEffect(DeviceType, RGB(R, G, B));
+				break;
+			//Reactive
+			case 1:
+				m_ChromaSDKImpl.SetRazerDeviceReactiveEffect(DeviceType, DirectionType, RGB(R, G, B));
+				break;
+			//Wave
+			case 2:
+				m_ChromaSDKImpl.SetRazerDeviceWaveEffect(DeviceType, DirectionType);
+				break;
+			//Spectrum
+			case 3:
+				m_ChromaSDKImpl.SetRazerDeviceSpectrumEffect(DeviceType);
+				break;
+			}
 		}
 	}
 	socket->Close();
