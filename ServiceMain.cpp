@@ -131,6 +131,8 @@ VOID WINAPI ServiceMain (DWORD argc, LPTSTR *argv)
 
 	//Save the settings, based on what was captured until this point
 	settingsSaver(settingsFile, settings, settingsSize);
+	//turn off all settings
+	m_ChromaSDKImpl.ResetEffects(6);
 
     CloseHandle (g_ServiceStopEvent);
 
