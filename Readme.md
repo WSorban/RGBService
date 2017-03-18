@@ -55,5 +55,6 @@ I have personally tested on the following devices:
 - Razer Blackwidow Chroma
 - Razer Firefly Chroma
 - Asus ROG 1080 GPU
+- Asus Formula IX Z270
 
 Enjoy!
